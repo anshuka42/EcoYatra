@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+
+  font-family: "Poppins", sans-serif;
+
+  background:#F8FAF8;
+
+  overflow-x:hidden;
+}
+.dark body{
+  background:#0F172A;
+  color:white;
+}
+
+
+/* Floating Leaves Animation */
+
+@keyframes leafFloat {
+
+0%{
+
+transform:
+
+translateY(0)
+
+rotate(0deg);
+
+}
+
+25%{
+
+transform:
+
+translateY(-20px)
+
+rotate(8deg);
+
+}
+
+50%{
+
+transform:
+
+translateY(10px)
+
+rotate(-8deg);
+
+}
+
+75%{
+
+transform:
+
+translateY(-15px)
+
+rotate(5deg);
+
+}
+
+100%{
+
+transform:
+
+translateY(0)
+
+rotate(0deg);
+
+}
+
+}
+
+
+
+.animate-leaf{
+
+animation:
+
+leafFloat
+
+8s
+
+ease-in-out
+
+infinite;
+
+}
