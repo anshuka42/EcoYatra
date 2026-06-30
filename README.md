@@ -1,16 +1,57 @@
-# React + Vite
+# EcoYatra Backend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Tech Stack
+- Node.js
+- Express.js
+- JavaScript
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Backend
 
-## React Compiler
+```bash
+cd backend
+npm install
+npm run dev
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### frontend
 
-## Expanding the ESLint configuration
+cd eco-yatra
+npm install
+npm run dev
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+---
+
+### 3. Export Postman Collection (2 minutes)
+
+In Postman:
+
+- Open **Collections**
+- Click the **⋯ (three dots)** next to your collection
+- Click **Export**
+- Choose **Collection v2.1**
+- Save it as required by your internship instructions.
+
+---
+
+### 4. Take Screenshots (10–15 minutes)
+
+Take screenshots of:
+
+- ✅ Home page showing destination cards loaded from the backend.
+- ✅ Chrome DevTools → **Network** tab showing the successful API request (`GET /api/destinations`).
+- ✅ Postman collection or a few successful API responses (if required by your module).
+
+Combine them into the required PDF.
+
+---
+
+### 5. Push to GitHub
+
+Commit and push your final Week 4 work:
+
+```bash
+git add .
+git commit -m "feat: connect frontend with backend APIs"
+git push origin main

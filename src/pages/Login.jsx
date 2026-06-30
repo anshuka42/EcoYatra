@@ -11,7 +11,7 @@ const Login = () => {
 
       <section className="min-h-screen flex items-center justify-center">
 
-        <div className="bg-white shadow-lg rounded-xl p-8 w-[350px]">
+        <div className="bg-white shadow-lg rounded-xl p-8 w- [350px]">
 
           <h2 className="text-3xl font-bold text-center mb-8">
 

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { getAllDestinations } from "../services/destinationService";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import SearchBar from "../components/SearchBar";
@@ -7,22 +9,66 @@ import ForestDivider from "../components/ForestDivider";
 import AirlinePartners from "../components/AirlinePartners";
 import Footer from "../components/Footer";
 
-import collection1 from "../assets/images/collection1.jpg";
-import collection2 from "../assets/images/collection2.jpg";
-import collection3 from "../assets/images/collection3.jpg";
+import collection1 from "/images/collection1.jpg";
+import collection2 from "/images/collection2.jpg";
+import collection3 from "/images/collection3.jpg";
 
-import chopta1 from "../assets/images/chopta1.jpg";
-import chopta2 from "../assets/images/chopta2.jpg";
-import chopta3 from "../assets/images/chopta3.jpg";
-import chopta4 from "../assets/images/chopta4.jpg";
-
-import munnar1 from "../assets/images/munnar1.jpg";
-import munnar2 from "../assets/images/munnar2.jpg";
-import munnar3 from "../assets/images/munnar3.jpg";
-import munnar4 from "../assets/images/munnar4.jpg";
 
 const Home = () => {
 
+const [destinations, setDestinations] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
+useEffect(() => {
+
+    const fetchDestinations = async () => {
+
+        try {
+
+            const response = await getAllDestinations();
+
+            setDestinations(response.data);
+
+        }
+
+        catch (err) {
+
+            setError("Unable to fetch destinations.");
+
+        }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    fetchDestinations();
+
+}, []);
+
+if (error) {
+  return (
+    <div className="min-h-screen flex justify-center items-center">
+      <h1 className="text-2xl text-red-500">
+        {error}
+      </h1>
+    </div>
+  );
+}
+
+
+if (loading) {
+  return (
+    <div className="min-h-screen flex justify-center items-center">
+      <h1 className="text-2xl font-semibold dark:text-white">
+        Loading destinations...
+      </h1>
+    </div>
+  );
+}
   return (
 
     <>
@@ -139,43 +185,20 @@ const Home = () => {
 
         >
 
-          <DestinationCard
-
-            img1={chopta1}
-
-            img2={chopta2}
-
-            img3={chopta3}
-
-            img4={chopta4}
-
-            title="Chopta"
-
-            state="Uttarakhand"
-
-            rating="4.8"
-
-          />
-
-
-
-          <DestinationCard
-
-            img1={munnar1}
-
-            img2={munnar2}
-
-            img3={munnar3}
-
-            img4={munnar4}
-
-            title="Munnar"
-
-            state="Kerala"
-
-            rating="4.9"
-
-          />
+{
+  destinations.map((destination) => (
+    <DestinationCard
+      key={destination.id}
+      img1={destination.img1}
+      img2={destination.img2}
+      img3={destination.img3}
+      img4={destination.img4}
+      title={destination.name}
+      state={destination.state}
+      rating={destination.rating}
+    />
+  ))
+}
 
         </div>
 
