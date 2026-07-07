@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Destination {
+  id          Int      @id @default(autoincrement())
+  name        String
+  state       String
+  description String
+  image       String
+  category    String
+  bestTime    String
+  duration    String
+  price       Int
+  rating      Float
+  ecoRating   Float
+  activities  String[]
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  
+
+  @@index([state])
+  @@index([category])
+  @@index([featured])
+}
+

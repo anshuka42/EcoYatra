@@ -1,251 +1,312 @@
-const destinations = require("../data/destinations");
+const prisma = require("../lib/prisma");
 
 // =======================================
 // GET ALL DESTINATIONS
 // =======================================
 
-const getAllDestinations = (req, res) => {
-
+const getAllDestinations = async (req, res) => {
   try {
+    const destinations = await prisma.destination.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
 
     res.status(200).json({
       success: true,
       count: destinations.length,
       data: destinations,
     });
-
   } catch (error) {
+    console.error("GET ALL ERROR:", error);
 
     res.status(500).json({
       success: false,
       message: "Unable to fetch destinations",
     });
-
   }
-
 };
-
 
 // =======================================
 // GET DESTINATION BY ID
 // =======================================
 
-const getDestinationById = (req, res) => {
+const getDestinationById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  const id = Number(req.params.id);
-
-  const destination = destinations.find(
-    (item) => item.id === id
-  );
-
-  if (!destination) {
-
-    return res.status(404).json({
-      success: false,
-      message: "Destination not found",
+    const destination = await prisma.destination.findUnique({
+      where: {
+        id: id,
+      },
     });
 
+    if (!destination) {
+      return res.status(404).json({
+        success: false,
+        message: "Destination not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: destination,
+    });
+  } catch (error) {
+    console.error("GET BY ID ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch destination",
+    });
   }
-
-  res.status(200).json({
-    success: true,
-    data: destination,
-  });
-
 };
-
 
 // =======================================
 // CREATE DESTINATION
 // =======================================
 
-const createDestination = (req, res) => {
+const createDestination = async (req, res) => {
+  try {
+    const {
+      name,
+      state,
+      description,
+      image,
+      category,
+      bestTime,
+      duration,
+      days,
+      price,
+      budget,
+      rating,
+      ecoRating,
+      activities,
+      featured,
+    } = req.body;
 
-  const {
+    if (!name || !state) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and State are required",
+      });
+    }
 
-    name,
-    state,
-    rating,
-    budget,
-    days,
-    category,
-    image,
-    description,
-
-  } = req.body;
-
-  if (!name || !state) {
-
-    return res.status(400).json({
-
-      success: false,
-
-      message: "Name and State are required",
-
+    const newDestination = await prisma.destination.create({
+      data: {
+        name,
+        state,
+        description: description || "",
+        image: image || "",
+        category: category || "General",
+        bestTime: bestTime || "All year",
+        duration: duration || days || "3 days",
+        price: Number(price ?? budget ?? 0),
+        rating: Number(rating ?? 0),
+        ecoRating: Number(ecoRating ?? 0),
+        activities: Array.isArray(activities) ? activities : [],
+        featured: Boolean(featured),
+      },
     });
 
+    res.status(201).json({
+      success: true,
+      message: "Destination Created",
+      data: newDestination,
+    });
+  } catch (error) {
+    console.error("CREATE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to create destination",
+    });
   }
-
-  const newDestination = {
-
-    id: destinations.length + 1,
-
-    name,
-
-    state,
-
-    rating,
-
-    budget,
-
-    days,
-
-    category,
-
-    image,
-
-    description,
-
-  };
-
-  destinations.push(newDestination);
-
-  res.status(201).json({
-
-    success: true,
-
-    message: "Destination Created",
-
-    data: newDestination,
-
-  });
-
 };
-
 
 // =======================================
 // UPDATE DESTINATION
 // =======================================
 
-const updateDestination = (req, res) => {
+const updateDestination = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  const id = Number(req.params.id);
-
-  const index = destinations.findIndex(
-
-    (item) => item.id === id
-
-  );
-
-  if (index === -1) {
-
-    return res.status(404).json({
-
-      success: false,
-
-      message: "Destination not found",
-
+    const existingDestination = await prisma.destination.findUnique({
+      where: {
+        id: id,
+      },
     });
 
+    if (!existingDestination) {
+      return res.status(404).json({
+        success: false,
+        message: "Destination not found",
+      });
+    }
+
+    const {
+      name,
+      state,
+      description,
+      image,
+      category,
+      bestTime,
+      duration,
+      days,
+      price,
+      budget,
+      rating,
+      ecoRating,
+      activities,
+      featured,
+    } = req.body;
+
+    const updateData = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (state !== undefined) updateData.state = state;
+    if (description !== undefined) updateData.description = description;
+    if (image !== undefined) updateData.image = image;
+    if (category !== undefined) updateData.category = category;
+    if (bestTime !== undefined) updateData.bestTime = bestTime;
+
+    if (duration !== undefined || days !== undefined) {
+      updateData.duration = duration || days;
+    }
+
+    if (price !== undefined || budget !== undefined) {
+      updateData.price = Number(price ?? budget);
+    }
+
+    if (rating !== undefined) {
+      updateData.rating = Number(rating);
+    }
+
+    if (ecoRating !== undefined) {
+      updateData.ecoRating = Number(ecoRating);
+    }
+
+    if (activities !== undefined) {
+      updateData.activities = Array.isArray(activities)
+        ? activities
+        : [];
+    }
+
+    if (featured !== undefined) {
+      updateData.featured = Boolean(featured);
+    }
+
+    const updatedDestination = await prisma.destination.update({
+      where: {
+        id: id,
+      },
+      data: updateData,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Destination Updated",
+      data: updatedDestination,
+    });
+  } catch (error) {
+    console.error("UPDATE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to update destination",
+    });
   }
-
-  destinations[index] = {
-
-    ...destinations[index],
-
-    ...req.body,
-
-  };
-
-  res.status(200).json({
-
-    success: true,
-
-    message: "Destination Updated",
-
-    data: destinations[index],
-
-  });
-
 };
-
 
 // =======================================
 // DELETE DESTINATION
 // =======================================
 
-const deleteDestination = (req, res) => {
+const deleteDestination = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  const id = Number(req.params.id);
-
-  const index = destinations.findIndex(
-
-    (item) => item.id === id
-
-  );
-
-  if (index === -1) {
-
-    return res.status(404).json({
-
-      success: false,
-
-      message: "Destination not found",
-
+    const existingDestination = await prisma.destination.findUnique({
+      where: {
+        id: id,
+      },
     });
 
+    if (!existingDestination) {
+      return res.status(404).json({
+        success: false,
+        message: "Destination not found",
+      });
+    }
+
+    await prisma.destination.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("DELETE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to delete destination",
+    });
   }
-
-  destinations.splice(index, 1);
-
-  res.status(204).send();
-
 };
-
 
 // =======================================
 // SEARCH DESTINATION
 // =======================================
 
-const searchDestination = (req, res) => {
+const searchDestination = async (req, res) => {
+  try {
+    const query = req.query.q || "";
 
-  const query = req.query.q?.toLowerCase() || "";
+    const result = await prisma.destination.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            state: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
 
-  const result = destinations.filter(
+    res.status(200).json({
+      success: true,
+      count: result.length,
+      data: result,
+    });
+  } catch (error) {
+    console.error("SEARCH ERROR:", error);
 
-    (item) =>
-
-      item.name.toLowerCase().includes(query) ||
-
-      item.state.toLowerCase().includes(query)
-
-  );
-
-  res.status(200).json({
-
-    success: true,
-
-    count: result.length,
-
-    data: result,
-
-  });
-
+    res.status(500).json({
+      success: false,
+      message: "Unable to search destinations",
+    });
+  }
 };
 
-
 module.exports = {
-
   getAllDestinations,
-
   getDestinationById,
-
   createDestination,
-
   updateDestination,
-
   deleteDestination,
-
   searchDestination,
-
 };
