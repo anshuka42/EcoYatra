@@ -6,6 +6,8 @@ import Destinations from "./pages/Destinations";
 import Login from "./pages/Login";
 import ManageDestinations from "./pages/ManageDestinations";
 
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 function App() {
 
   return (
@@ -22,7 +24,14 @@ function App() {
 
         <Route path="/login" element={<Login />} />
 
-        <Route path="/manage-destinations" element={<ManageDestinations />}/>
+        <Route
+          path="/manage-destinations"
+          element={
+            <ProtectedRoute>
+              <ManageDestinations />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
 
