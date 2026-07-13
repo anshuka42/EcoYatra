@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
+const authRoutes = require("./routes/authRoutes");
 dotenv.config();
 
 // Database connection
@@ -37,6 +37,8 @@ app.get("/", (req, res) => {
 
 // API routes
 app.use("/api/destinations", destinationRoutes);
+
+app.use("/api/auth", authRoutes);
 
 // 404 Middleware
 app.use(notFound);

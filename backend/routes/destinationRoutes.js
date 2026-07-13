@@ -1,5 +1,6 @@
 const express = require("express");
 const validateDestination = require("../validators/destinationValidator");
+const protect = require("../middleware/authMiddleware");
 const router = express.Router();
 
 const {
@@ -36,15 +37,26 @@ router.get("/:id", getDestinationById);
 
 // POST
 
-router.post("/", validateDestination, createDestination);
+// router.post("/", validateDestination, createDestination);
+router.post(
+  "/",
+  protect,
+  createDestination
+);
 
 // PUT
 
-router.put("/:id", updateDestination);
-
+router.put(
+  "/:id",
+  protect,
+  updateDestination
+);
 
 // DELETE
 
-router.delete("/:id", deleteDestination);
-
+router.delete(
+  "/:id",
+  protect,
+  deleteDestination
+);
 module.exports = router;

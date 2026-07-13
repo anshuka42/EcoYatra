@@ -23,10 +23,15 @@ model Destination {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  
-
   @@index([state])
   @@index([category])
   @@index([featured])
 }
-
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
